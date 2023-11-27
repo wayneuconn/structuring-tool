@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Modal, Form, Input, DatePicker, Button } from 'antd'
-import dayjs, { Dayjs } from 'dayjs'
+import { Dayjs } from 'dayjs'
 
 interface CreateTrancheModalProps {
   open: boolean
   existingTrancheNames: string[]
-  onCreate: (values: { name: string; balance: number; coupon: number; maturityDate: Dayjs }) => void;
+  onCreate: (values: { name: string; balance: number; coupon: number; maturityDate: Dayjs }) => void
   onCancel: () => void
 }
 

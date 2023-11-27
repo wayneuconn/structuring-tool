@@ -1,21 +1,16 @@
 import React, { useState } from 'react'
-import { Table, Button, Modal, Form, Input, DatePicker, message } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
+import { Table, Button, Modal, Form, Flex } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
 import CreateTrancheModal from './TrancheCreate'
+import TrancheSchema from './TrancheSchema'
 
-interface DataType {
-  key: string
-  name: string
-  balance: number
-  coupon: number
-  maturityDate: Dayjs
+interface TranchesProps {
+  tranches: TrancheSchema[]
+  setTranches: (tranches: TrancheSchema[]) => void
 }
 
 
-
-const Tranches: React.FC = () => {
-  const [data, setData] = useState<DataType[]>([])
+const Tranches: React.FC<TranchesProps> = ({tranches, setTranches}) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [form] = Form.useForm()
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
@@ -24,17 +19,16 @@ const Tranches: React.FC = () => {
 
 
   const showModal = () => setIsModalVisible(true)
-  const handleCancel = () => setIsModalVisible(false)
 
   const handleSave = (values: { name: string; balance: number; coupon: number; maturityDate: Dayjs }) => {
-      setData([...data, { ...values, key: String(data.length + 1), maturityDate: dayjs(values.maturityDate) }])
+    setTranches([...tranches, { ...values, key: String(tranches.length + 1), maturityDate: dayjs(values.maturityDate) }])
       setIsModalVisible(false)
       form.resetFields()
   }
 
   const handleDelete = () => {
     if (itemToDelete !== null) {
-        setData(data.filter(item => item.key !== itemToDelete))
+        setTranches(tranches.filter(item => item.key !== itemToDelete))
         setIsDeleteModalVisible(false)
         setItemToDelete(null)
     }
@@ -44,7 +38,7 @@ const Tranches: React.FC = () => {
     setItemToDelete(key)
     setIsDeleteModalVisible(true)
   }
-  const existingTrancheNames = data.map(item => item.name)
+  const existingTrancheNames = tranches.map(item => item.name)
   const columns = [
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'Balance', dataIndex: 'balance', key: 'balance' },
@@ -53,16 +47,19 @@ const Tranches: React.FC = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (text: string, record: DataType) => (
+      render: (text: string, record: TrancheSchema) => (
         <Button type="link" onClick={() => showDeleteModal(record.key)}>Delete</Button>
       )
     }
-  ];
+  ]
 
   return (
     <>
-      <Button type="primary" onClick={showModal}>Create a Tranche</Button>
-      <Table dataSource={data} columns={columns} />
+      <Flex gap="small" wrap="wrap">
+        <Button type="primary" onClick={showModal}>Create a Tranche</Button>
+      </Flex>
+      
+      <Table dataSource={tranches} columns={columns} />
 
       <CreateTrancheModal
         open={isModalVisible}
@@ -82,4 +79,4 @@ const Tranches: React.FC = () => {
   )
 }
 
-export default Tranches;
+export default Tranches
