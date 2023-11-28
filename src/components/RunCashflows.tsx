@@ -6,24 +6,21 @@ interface RunCashflowsProps {
   tranches: TrancheSchema[]
   tapeID: string
   principalRules: string[]
-  interestRules: string[]
 }
   
-const RunCashflowButton: React.FC<RunCashflowsProps> = ({ tranches, tapeID, principalRules, interestRules }) => {
+const RunCashflowButton: React.FC<RunCashflowsProps> = ({ tranches, tapeID, principalRules }) => {
   const [isValid, setIsValid] = useState(true)
   useEffect(() => {
     const isDataValid = tapeID.length > 0 && 
       tranches.length > 0 && 
-      principalRules.length > 0 && 
-      interestRules.length > 0
+      principalRules.length > 0 
     setIsValid(isDataValid)
-  }, [tranches, tapeID, principalRules, interestRules])
+  }, [tranches, tapeID, principalRules])
   const handleButtonClick = () => {
     const jsonData = {
       tranches,
       tapeID,
-      principalRules,
-      interestRules
+      principalRules
     }
 
     console.log(JSON.stringify(jsonData, null, 2))
