@@ -38,9 +38,7 @@ const rightTableColumns: ColumnsType<PayruleType> = [
   },
 ]
 
-const PayRules: React.FC<PayRuleProps> = ({
-  setPaymentRules,
-}) => {
+const PayRules: React.FC<PayRuleProps> = ({ setPaymentRules }) => {
   const [targetKeys, setTargetKeys] = useState<string[]>([])
   const [type, setType] = useState<string>('nonQm')
   const [options, setOptions] = useState<PayruleType[]>(nonQmOptions)

@@ -48,6 +48,7 @@ const CreateTrancheModal: React.FC<CreateTrancheModalProps> = ({ open, existingT
       ]}
     >
       <Form form={form} layout="vertical">
+        {/* TODO abstract and reuse these forms */}
         <Form.Item 
           name="name" 
           label="Tranche Name" 

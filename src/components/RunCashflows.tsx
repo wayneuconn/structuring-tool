@@ -1,25 +1,42 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Tooltip } from 'antd'
-import type TrancheSchema from './TrancheSchema'
+import type TrancheSchema from './schemas/TrancheSchema'
+import CollateralSchema from './schemas/CollateralSchema'
 
 interface RunCashflowsProps {
+  type: string
   tranches: TrancheSchema[]
   tapeID: string
+  collateral: CollateralSchema | undefined
+  loans: string | undefined
   principalRules: string[]
 }
   
-const RunCashflowButton: React.FC<RunCashflowsProps> = ({ tranches, tapeID, principalRules }) => {
+const RunCashflowButton: React.FC<RunCashflowsProps> = ({ type, tranches, tapeID, collateral, loans, principalRules }) => {
   const [isValid, setIsValid] = useState(true)
   useEffect(() => {
-    const isDataValid = tapeID.length > 0 && 
+    const isDataValid = (tapeID.length > 0 || collateral || loans ? true : false) && 
       tranches.length > 0 && 
       principalRules.length > 0 
     setIsValid(isDataValid)
-  }, [tranches, tapeID, principalRules])
+  }, [type, tranches, tapeID, collateral,loans, principalRules])
+
   const handleButtonClick = () => {
+    let collateralBody
+    switch(type) {
+      case 'tape':
+        collateralBody = tapeID
+        break;
+      case 'loans':
+        collateralBody = loans
+        break;
+      case 'collateral':
+        collateralBody = collateral
+        break;
+    }
     const jsonData = {
       tranches,
-      tapeID,
+      collateralBody,
       principalRules
     }
 

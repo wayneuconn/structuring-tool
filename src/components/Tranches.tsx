@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Table, Button, Modal, Form, Flex } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
 import CreateTrancheModal from './TrancheCreate'
-import TrancheSchema from './TrancheSchema'
+import TrancheSchema from './schemas/TrancheSchema'
 
 interface TranchesProps {
   tranches: TrancheSchema[]

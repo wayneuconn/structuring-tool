@@ -1,19 +1,25 @@
-import React, {useState} from 'react'
-import { Radio, Space, Button, Input } from 'antd'
-import { RadioChangeEvent, Upload, message, Flex } from 'antd'
-import { InboxOutlined } from '@ant-design/icons'
+import React from 'react'
+import { Radio, Space, Button, Input, RadioChangeEvent, message, Flex, Alert } from 'antd'
 import type { UploadProps } from 'antd'
-const { Dragger } = Upload
+import CollateralBuilder from './CollateralBuilder'
+import CollateralSchema from './schemas/CollateralSchema'
+import LoansInput from './LoansInput'
+const { TextArea } = Input
 
 const options = [
   { label: 'Tape ID', value: 'tape' },
-  { label: 'Upload (In Progress)', value: 'loans' },
+  { label: 'Loans', value: 'loans' },
+  { label: 'Collateral Builder', value: 'collateral' },
 ]
 
 interface CollateralProps {
   type: string,
+  collateral: CollateralSchema | undefined,
+  loans: string | undefined,
   onTypeChange: ({ target: { value } }: RadioChangeEvent) => void
   setTapeID: (tapeID: string) => void
+  handleCollateralSave: (collateral: CollateralSchema) => void
+  handleSetLoans: (loans: string) => void
 }
 
 //TODO: this is placeholder
@@ -40,56 +46,60 @@ const props: UploadProps = {
 const collateralSourceComponent = (
     type: string,
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-    handleClick: () => void
+    handleClick: () => void,
+    setLoans: (loans: string) => void,
+    setCollateral: (collateral: CollateralSchema) => void
   ) => {
-  if (type === 'tape') {
-    return (
-      <div>
-        <Space.Compact style={{ width: '100%' }}>
-          <Input placeholder="Tape ID" onChange={handleInputChange}/>
-          <Button type="primary" onClick={handleClick}>
-            Validate Tape
-          </Button>
-        </Space.Compact>
-      </div>
-    )
-  } else {
-    return (
-      <Dragger {...props}>
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined />
-        </p>
-        <p className="ant-upload-text">Click or drag file to this area to upload</p>
-        <p className="ant-upload-hint">
-          Support for a single or bulk upload. Strictly prohibited from uploading company data or other
-          banned files.
-        </p>
-      </Dragger>
-    )
-  }
+    switch(type) {
+      case 'tape':
+        return (
+          <div>
+            <Space.Compact style={{ width: '100%' }}>
+              <Input placeholder="Tape ID" onChange={handleInputChange}/>
+              <Button type="primary" onClick={handleClick}>
+                Validate Tape
+              </Button>
+            </Space.Compact>
+          </div>
+        )
+      case 'loans':
+        return (<LoansInput setLoans={setLoans} />)
+      case 'collateral':
+        return (<CollateralBuilder setCollateral={setCollateral} />)
+    }
 }
 
-const Collateral: React.FC<CollateralProps> = ({type, onTypeChange, setTapeID}) => {
-  const [inputValue, setInputValue] = useState('')
+const Collateral: React.FC<CollateralProps> = ({type, collateral, loans, onTypeChange, setTapeID, handleCollateralSave, handleSetLoans}) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTapeID(e.target.value)
   }
 
-  const handleClick = () => {
+  const handleValidateTape = () => {
     //validateTape(inputValue)
   }
+
+
   return(
-    <Flex vertical>
+    <Flex vertical gap="medium">
       <Space direction="vertical">
-        <Radio.Group
-          onChange={onTypeChange}
-          options={options}
-          value={type}
-          optionType="button"
-          buttonStyle="solid"
-        />
-        {collateralSourceComponent(type, handleInputChange, handleClick)}
+        <Flex vertical gap="large">
+          <Radio.Group
+            onChange={onTypeChange}
+            options={options}
+            value={type}
+            optionType="button"
+            buttonStyle="solid"
+          />
+          {collateral && <Alert message={collateral.name} type="success" showIcon />}
+          {loans && <Alert message="Loans Saved" type="success" showIcon />}
+        </Flex>
+        {collateralSourceComponent(
+          type,
+          handleInputChange,
+          handleValidateTape,
+          handleSetLoans,
+          handleCollateralSave)}
       </Space>
     </Flex>
   )
